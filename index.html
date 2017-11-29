@@ -10,32 +10,32 @@
 <body>
 
 <div id="game"></div>
-
+<script src="assets/js/phaser.js"></script>
     
     
 <script>
-/* global Phaser, game */
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
 
-    
+    game.load.image('bullet','assets/games/invaders/bullet.png');
     game.load.image('enemyBullet', 'assets/games/invaders/enemy-bullet.png');
     game.load.spritesheet('invader', 'assets/games/invaders/invader32x32x4.png', 32, 32);
     game.load.image('ship', 'assets/games/invaders/player.png');
     game.load.spritesheet('kaboom', 'assets/games/invaders/explode.png', 128, 128);
-    game.load.image('starfield', 'assets/games/invaders/starfield.png');
+    game.load.image('deep-space', 'assets/games/invaders/deep-space.jpg');
     game.load.image('background', 'assets/games/starstruck/background2.png');
 
 }
 
-
+var player;
+var aliens;
 var bullets;
 var bulletTime = 0;
 var cursors;
 var fireButton;
 var explosions;
-var starfield;
+var deepspace;
 var score = 0;
 var scoreString = '';
 var scoreText;
@@ -50,7 +50,7 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //  The scrolling starfield background
-    starfield = game.add.tileSprite(0, 0, 800, 600, 'starfield');
+    deepspace = game.add.tileSprite(0 , 0, 800, 600, 'deep-space');
 
     //  Our bullet group
     bullets = game.add.group();
@@ -82,7 +82,7 @@ function create() {
     aliens.enableBody = true;
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
 
-    // createAliens();
+    createAliens();
 
     //  The score
     scoreString = 'Score : ';
@@ -142,21 +142,22 @@ function createAliens () {
 
     function setupInvader (invader) {
 
-        
+    invader.anchor.x = 0.5;    
+    invader.anchor.y = 0.5;  
+    invader.animations.add('kaboom');  
 
     }
 
 
-
-
-
-
+function descend() {
+        aliens.y +=10;
+}
 
 
 function update() {
 
     //  Scroll the background
-    starfield.tilePosition.y += 2;
+    deepspace.tilePosition.y += 2;
 
     if (player.alive)
     {
@@ -316,7 +317,16 @@ function resetBullet (bullet) {
 
 }
 
-
+function restart(){
+    lives.callAll('revive');
+    
+    aliens.removeAll();
+    createAliens();
+    
+    player.revive();
+    stateText.visible = false;
+}
+    
 </script>
 
 </body>
